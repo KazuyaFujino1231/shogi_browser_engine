@@ -1,0 +1,65 @@
+{
+  "id": "tsuyouraou-11micro",
+  "version": "eec617e25ef80a51",
+  "name": "TsuyouraOu 11 micro",
+  "author": "Yaneurao",
+  "licenses": [
+    "GPL-3.0",
+    "MIT"
+  ],
+  "packageURL": "https://assets.shogihome.com/yaneuraou/20260904.c1b80eaa/tsuyouraou-11micro/",
+  "files": [
+    {
+      "path": "LICENSE.txt",
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "size": 35147
+    },
+    {
+      "path": "MIT.txt",
+      "sha256": "6794c5e9fc292c8100e98806f99a1bbebb48801b51add07a3ac933ac5970120e",
+      "size": 1075
+    },
+    {
+      "path": "banner.png",
+      "sha256": "410825c3e2f77785d36b9610cd90ed7d20a6fe573f2d8d4372524d202bf01fcf",
+      "size": 434975
+    },
+    {
+      "path": "engine.json",
+      "sha256": "2ffed6d0a7e89d0af3d903fd43052d6d69217a89882fff65a1706ac49e124d88",
+      "size": 5584
+    },
+    {
+      "path": "nn.bin",
+      "sha256": "7f9545dbf73b87acf312146daabf59c4f17d0845c87d587fa19caed51707dddb",
+      "size": 3864610
+    },
+    {
+      "path": "progress.bin",
+      "sha256": "a2d18f0564639c945b5d6469e9b437cd64a526ad4fbcef02ab1d8f547d08e5f1",
+      "size": 1003104
+    },
+    {
+      "path": "yaneuraou.js",
+      "sha256": "98b1f1888752eea6981e9ffa9189587e5ece90f808eee01b8cde499470926c01",
+      "size": 48560
+    },
+    {
+      "path": "yaneuraou.wasm",
+      "sha256": "af384f8fbbc16aef7ac840d244c19c0d13d6bd9adf4a9bca515595c8f8fb1594",
+      "size": 817304
+    },
+    {
+      "path": "yaneuraou.worker.js",
+      "sha256": "ad9766e06c0815f2127aa6e9bf00506c55cadb0b7083824b5cb735cb9072f213",
+      "size": 2950
+    }
+  ],
+  "source": {
+    "url": "https://codeload.github.com/sunfish-shogi/YaneuraOu/tar.gz/c1b80eaa09fe13d5f12b1599d1ae4d53c224de30",
+    "commit": "c1b80eaa09fe13d5f12b1599d1ae4d53c224de30",
+    "sha256": "f0b655fc89fb4b5e58c6c9122d3bcc8ea8d9f46e6ba7229679309fff005de92b",
+    "edition": "YANEURAOU_ENGINE_SFNN_ka2_2048_8_64_progress8",
+    "exportName": "YaneuraOu_SFNN_ka2_2048_8_64_progress8"
+  }
+}
