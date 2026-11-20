@@ -17,3 +17,9 @@ test('USI commands exclude newline injection and maintenance commands', () => {
   for (const command of ['usi','isready','stop','quit','position startpos','position sfen 4k4/9 b - 1','go movetime 3000','setoption name Threads value 1']) assert.equal(validCommand(command),true);
   for (const command of ['usi\nquit','usi\rquit','learn','gensfen random',null,'x'.repeat(17000)]) assert.equal(validCommand(command),false);
 });
+import { classifyPortMessage } from '../src/protocol.js';
+test('port messages are classified: dispose is an explicit host request, anything else must be a valid command', () => {
+  assert.equal(classifyPortMessage({ type: 'dispose' }), 'dispose');
+  assert.equal(classifyPortMessage({ type: 'command', line: 'isready' }), 'command');
+  for (const data of [null, undefined, {}, { type: 'command', line: 'learn' }, { type: 'command' }, { type: 'x' }]) assert.equal(classifyPortMessage(data), 'invalid');
+});

@@ -31,6 +31,15 @@ iframeにallow="cross-origin-isolated"を指定します。
 受信ポートで{type:'ready',engine:{name,version,evaluation_model,engine_build}}を返します。
 {type:'command',line:'usi'}を送り、{type:'line',line:'usiok'}等を受信します。
 失敗は{type:'error',message:'...'}。画面ID・認証・アプリ内部オブジェクトを扱いません。
+連続して解析する場合は、同じiframe・ポートを使い回せます(usiから始めても、usinewgame以降だけでも構いません)。
+探索を中断するときはstopを送り、bestmoveが返るのを待ってから次のpositionを送ってください。
+ホストは終了時に{type:'dispose'}を送ってください。{type:'disposed'}は「終了完了」の通知です。
+起動中(評価ファイル取得・WASM初期化の途中)に送った場合は、起動を中断し、WASM初期化の完了を待って
+生成済みのモジュールを終了させてから返します。この通知のあとにiframeを削除し、次のエンジンを起動すれば、
+前後のエンジンのメモリ確保が重なりません。通知後はポートが閉じ、起動時の{type:'ready'}も送られません。
+ページ離脱(pagehide)時も同様に停止します。dispose後のコマンドは無視されます。
+WASMが異常終了した場合(メモリ不足など)は{type:'error',message:'...'}を送ります。
+このときエンジンは応答しないため、ホストはiframeを削除して作り直してください。
 ホストはタイムアウト・中止時にポートを閉じてiframeを削除してください。
 
 ## 配信条件

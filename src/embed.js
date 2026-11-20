@@ -1,28 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { loadEngine } from './loader.js';
-import { parseParentOrigin, validConnect, validCommand } from './protocol.js';
+import { createEngineHost } from './host.js';
+import { parseParentOrigin, validConnect } from './protocol.js';
 const origin = parseParentOrigin(new URL(location.href).searchParams.get('parentOrigin'));
 let active = false;
-let engine;
-let port;
-window.addEventListener('message', async (event) => {
+let host;
+window.addEventListener('message', (event) => {
   if (active || !validConnect(event, window.parent, origin)) return;
   active = true;
-  port = event.ports[0];
+  const port = event.ports[0];
   port.start();
-  try {
-    const loaded = await loadEngine((line) => port.postMessage({ type: 'line', line }));
-    engine = loaded.module;
-    port.onmessage = ({ data }) => {
-      if (data?.type !== 'command' || !validCommand(data.line)) {
-        port.postMessage({ type: 'error', message: '不正なUSIコマンドです。' });
-        return;
-      }
-      engine.postMessage(data.line);
-    };
-    port.postMessage({ type: 'ready', engine: loaded.engine });
-  } catch (error) {
-    port.postMessage({ type: 'error', message: error.message || 'エンジンを起動できません。' });
-  }
+  host = createEngineHost({
+    loadEngine,
+    post: (message) => port.postMessage(message),
+    close: () => port.close(),
+  });
+  // 受信は接続直後から有効にし、エンジン起動中でも dispose を受け付ける。
+  port.onmessage = ({ data }) => host.handleMessage(data);
+  void host.start();
 });
-window.addEventListener('pagehide', () => { engine?.terminate(); port?.close(); }, { once: true });
+// ページ離脱時はホストが待っていないため、通知は送らずに停止だけ行う。
+window.addEventListener('pagehide', () => { void host?.dispose({ acknowledge: false }); }, { once: true });
