@@ -14,6 +14,11 @@ export function validConnect(event, parent, origin) {
     typeof data.session_id === 'string' && data.session_id.length > 0 &&
     data.session_id.length <= 128 && event.ports?.length === 1);
 }
+/** 受信ポートのメッセージ種別。dispose はホストからの明示的な終了要求(エンジンを確実に停止する)。 */
+export function classifyPortMessage(data) {
+  if (data?.type === 'dispose') return 'dispose';
+  return data?.type === 'command' && validCommand(data.line) ? 'command' : 'invalid';
+}
 export function validCommand(line) {
   // Exclude engine maintenance/training commands: the public bridge is a USI endpoint.
   return typeof line === 'string' && line.length <= 16384 && !/[\r\n\0]/.test(line) &&

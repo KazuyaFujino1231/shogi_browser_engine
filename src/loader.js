@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 let loading;
-export async function loadEngine(onLine) {
+/**
+ * onLine: エンジンの出力行。onFatal: WASMが異常終了した(メモリ不足など)ときの通知。
+ * 異常終了後のエンジンは応答しないため、ホストが待ち続けず作り直せるよう必ず通知する。
+ */
+export async function loadEngine(onLine, onFatal = () => {}) {
   if (loading) throw new Error('このエンジンは既に起動しています。');
   loading = true;
   const manifest = await fetch(new URL('./manifest.json', import.meta.url)).then((r) => {
@@ -33,10 +37,15 @@ export async function loadEngine(onLine) {
       locateFile: (name) => new URL(name, assets).href,
       mainScriptUrlOrBlob: new URL(manifest.module, assets).href,
       printErr: (line) => console.warn('[USI engine]', line),
-      onAbort: () => onLine('info string engine aborted'),
+      onAbort: () => {
+        onLine('info string engine aborted');
+        onFatal('エンジンが異常終了しました。メモリ不足の可能性があります。');
+      },
     });
     try { module.FS.mkdir('/eval'); } catch { /* directory may already exist */ }
     for (const [path, bytes] of files) module.FS.writeFile(path, bytes);
+    // 評価関数はWASMのファイルシステムへ複製済み。JS側の控えを手放し、メモリの二重保持を避ける。
+    files.length = 0;
     module.addMessageListener(onLine);
     // Set model-specific options before the host's first isready triggers evaluation loading.
     module.postMessage('setoption name EvalDir value /eval');
